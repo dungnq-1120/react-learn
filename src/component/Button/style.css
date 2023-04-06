@@ -1,0 +1,10 @@
+.btn {
+  background-color: black;
+  color: white;
+  padding: 10px 30px;
+  text-transform: uppercase;
+  border-radius: 30px;
+}
+.red {
+  background-color: red;
+}
