@@ -2,12 +2,12 @@ const Card = (props) => {
   const { item, outOfDate } = props;
   const { img, content, name } = item;
   return (
-    <div class="card" style={{ width: "18rem" }}>
+    <div className="card" style={{ width: "18rem" }}>
       {outOfDate && "out Of Date"}
-      <img src={img} class="card-img-top" alt="..." />
-      <div class="card-body">
-        <h5 class="card-title">{name}</h5>
-        <p class="card-text">{content}</p>
+      <img src={img} className="card-img-top" alt="..." />
+      <div className="card-body">
+        <h5 className="card-title">{name}</h5>
+        <p className="card-text">{content}</p>
       </div>
     </div>
   );
