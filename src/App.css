@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 .App {
   text-align: center;
 }
@@ -104,4 +108,12 @@ form .todo-item button {
   cursor: pointer;
   background-color: #4275f7;
   color: #fff;
+}
+
+.helle-tailwind {
+  @apply bg-[red] text-white hover:bg-[blue];
+}
+
+.input-default {
+  @apply p-[12px] w-[300px] rounded-default border-solid border-2 border-indigo-600;
 }
