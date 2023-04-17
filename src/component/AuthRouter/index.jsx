@@ -4,7 +4,7 @@ import Header from "../Header";
 
 export default function AuthRouter({ authen, Children, ...rest }) {
   if (!authen) {
-    return <Redirect to={"/login"} />;
+    return <Redirect to="/login" />;
   }
   return (
     <Route
