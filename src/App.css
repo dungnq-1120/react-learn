@@ -117,3 +117,13 @@ form .todo-item button {
 .input-default {
   @apply p-[12px] w-[300px] rounded-default border-solid border-2 border-indigo-600;
 }
+
+.card-img-top {
+  height: 200px !important;
+}
+
+li {
+  color: blue;
+  padding: 5px;
+  cursor: pointer;
+}

@@ -1,76 +1,71 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import "./App.css";
+import Card from "./component/Card";
+import restClient from "./service";
+
+import { setProductAction } from "./redux/action";
+
 function App() {
-  const [formValue, setFormValue] = useState({
-    userName: "",
-    password: "",
+  const [isLoading, setIsloading] = useState(false);
+  const [meta, setMeta] = useState({
+    _limit: 10,
+    _page: 1,
+    _totalRows: 0,
   });
 
-  const [formErrors, setFormErrors] = useState({
-    userNameError: "",
-    passwordError: "",
-  });
+  const products = useSelector((state) => state.productReducer.products);
+  const dispatch = useDispatch();
 
-  function changeValueForm(value, key) {
-    setFormValue({
-      ...formValue,
-      [key]: value,
+  useEffect(() => {
+    fetchProduct(meta);
+  }, []);
+
+  async function fetchProduct(params) {
+    setIsloading(true);
+    try {
+      const response = await restClient("get", "products", params);
+      // setProducts(response.data.data);
+      dispatch(setProductAction(response.data.data));
+      // setMeta(response.data.pagination);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsloading(false);
+    }
+  }
+
+  const handleChangePage = (page) => {
+    setMeta({
+      ...meta,
+      _page: page,
     });
-  }
-
-  function handleSubmit() {
-    let isValid = true;
-    let errors = {
-      ...formErrors,
-    };
-    if (!formValue.userName) {
-      errors.userNameError = "user name is Require";
-      isValid = false;
-    } else {
-      errors.userNameError = "";
-    }
-    // password
-    if (!formValue.password) {
-      errors.passwordError = "password is Require";
-      isValid = false;
-    } else {
-      errors.passwordError = "";
-    }
-    setFormErrors(errors);
-
-    if (isValid) {
-      console.log("dang nhap thanh cong");
-    }
-  }
+    fetchProduct({
+      ...meta,
+      _page: page,
+    });
+  };
 
   return (
     <div>
-      <div className="p-3">
-        <label className="w-[100px]">User Name</label>
-        <input
-          type="text"
-          className="input-default"
-          value={formValue.userName}
-          onChange={(e) => changeValueForm(e.target.value, "userName")}
-        />
-        <span className="text-red-500">{formErrors.userNameError}</span>
+      <div>
+        <ul className="flex flex-wrap">
+          {[...Array(Math.ceil(meta._totalRows / meta._limit))].map(
+            (item, index) => {
+              return (
+                <li onClick={() => handleChangePage(index + 1)}>{index + 1}</li>
+              );
+            }
+          )}
+        </ul>
       </div>
-      <div className="p-3">
-        <label className="w-[100px]">password</label>
-        <input
-          type="password"
-          className="input-default"
-          value={formValue.password}
-          onChange={(e) => changeValueForm(e.target.value, "password")}
-        />
-        <span className="text-red-500">{formErrors.passwordError}</span>
+      <div className="flex flex-wrap">
+        {isLoading ? (
+          <h1>LOADING...........</h1>
+        ) : (
+          products.map((item) => <Card key={item.id} item={item} />)
+        )}
       </div>
-      <button
-        className="mx-[100px] input-default"
-        onClick={() => handleSubmit()}
-      >
-        Submit
-      </button>
     </div>
   );
 }
