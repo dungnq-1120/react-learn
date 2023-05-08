@@ -1,9 +1,7 @@
 import { Redirect, Route } from "react-router-dom";
-import Footer from "../Footer";
-import Header from "../Header";
 
-export default function AuthRouter({ authen, Children, ...rest }) {
-  if (!authen) {
+export default function AuthRouter({ authen, author, Children, ...rest }) {
+  if (!authen && !author) {
     return <Redirect to="/login" />;
   }
   return (
@@ -12,9 +10,7 @@ export default function AuthRouter({ authen, Children, ...rest }) {
       render={(routeProps) => {
         return (
           <div>
-            <Header />
             <Children />
-            <Footer />
           </div>
         );
       }}

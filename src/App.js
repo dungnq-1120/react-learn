@@ -7,7 +7,7 @@ import {
   useHistory,
   Redirect,
 } from "react-router-dom";
-import AuthRouter from "./component/AuthRouter";
+import AuthRouter from "./Routers/AuthRouter";
 function App() {
   return (
     <div>
