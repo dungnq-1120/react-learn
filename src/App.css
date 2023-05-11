@@ -5,3 +5,14 @@
 .nav--link__active {
   color: red;
 }
+
+header ul {
+  display: flex;
+  list-style: none;
+}
+
+li {
+  padding: 5px 15px;
+  border: 1px solid black;
+  margin: 15px;
+}
