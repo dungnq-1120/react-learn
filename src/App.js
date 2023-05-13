@@ -1,43 +1,80 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import "./App.css";
+import React, { useState } from "react";
+import { Button, Modal, Checkbox, Form, Input } from "antd";
 
-const sum = (count) => {
-  console.log("render sum");
-  return count + 1;
-};
+import * as Styles from "./style.js";
 
 function App() {
-  const [count, setCount] = useState(1);
-  const [count1, setCount1] = useState(1);
-  const h1Ref = useRef();
-  console.log("render parent");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSignIn, setIsSignIn] = useState(true);
 
-  const handleClick = useCallback(() => {}, []);
-  const sumData = useMemo(() => sum(count1), [count1]);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const onFinish = (values) => {
+    console.log("Success:", values);
+  };
+
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
   return (
-    <div action="">
-      {count}-------------- sumCOunt1: {sumData}
-      <button onClick={() => setCount(count + 1)}> add</button>
-      <h1 className="header" ref={h1Ref}>
-        My Todo-s
-      </h1>
-      <Child count={count1} handleClick={handleClick} />
-    </div>
+    <>
+      <Button type="primary" onClick={showModal}>
+        Open Modal
+      </Button>
+      <Styles.ModalCustom
+        open={isModalOpen}
+        title={
+          <Styles.HeaderLoginModal isSignIn={isSignIn}>
+            <button onClick={() => setIsSignIn(true)}>Sign in</button>
+            <button onClick={() => setIsSignIn(false)}>Sign up</button>
+          </Styles.HeaderLoginModal>
+        }
+        onCancel={() => setIsModalOpen(false)}
+        footer={null}
+      >
+        {isSignIn ? (
+          <Styles.SignInWrapper>
+            <h1>Sign in to your account</h1>
+            <Form
+              name="basic"
+              initialValues={{ remember: true }}
+              onFinish={onFinish}
+              onFinishFailed={onFinishFailed}
+              autoComplete="off"
+            >
+              <Styles.InputCustom
+                name="username"
+                rules={[
+                  { required: true, message: "Please input your username!" },
+                ]}
+              >
+                <Input />
+              </Styles.InputCustom>
+
+              <Styles.InputCustom
+                name="password"
+                rules={[
+                  { required: true, message: "Please input your password!" },
+                ]}
+              >
+                <Input.Password />
+              </Styles.InputCustom>
+
+              <Form.Item>
+                <Styles.ButtonCustom type="primary" htmlType="submit">
+                  Login
+                </Styles.ButtonCustom>
+              </Form.Item>
+            </Form>
+          </Styles.SignInWrapper>
+        ) : (
+          <div>Page sign up</div>
+        )}
+      </Styles.ModalCustom>
+    </>
   );
 }
 
 export default App;
-// hook
-
-const Child = React.memo(() => {
-  console.log("render Child");
-  return <div>....</div>;
-});
-
-//useMemo va useCallback
