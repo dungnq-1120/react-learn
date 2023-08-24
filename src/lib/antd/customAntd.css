@@ -1,0 +1,35 @@
+.ant-input, .ant-select-selector {
+  border-radius: 20px !important;
+  /* width: 200px; */
+  height: 50px !important;
+}
+
+.ant-btn {
+  border-color: #ff5c00;
+  /* padding: 10px 20px; */
+
+  width: 200px;
+  height: 50px;
+  border-radius: 50px !important;
+}
+
+.ant-btn.ant-btn-primary {
+  background-color: #ff5c00;
+  color: white;
+}
+
+.ant-btn.ant-btn-primary:hover,
+.ant-btn.ant-btn-primary:active,
+.ant-btn.ant-btn-primary:focus {
+  background-color: #ff5e00a1 !important;
+  color: white;
+}
+
+
+.ant-btn.ant-btn-default:hover,
+.ant-btn.ant-btn-default:active,
+.ant-btn.ant-btn-default:focus {
+  background-color: #ff5e00 !important;
+  color: white !important;
+  border-color: #ff5c00 !important;
+}
