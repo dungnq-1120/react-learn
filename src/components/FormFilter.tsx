@@ -1,24 +1,29 @@
 import { Col, Input, Row } from "antd";
-import { useEffect, useState } from "react";
-import useDebouncedEffects from "../hooks/useDebouncedEffects";
+import { useState } from "react";
 
-export default function FormFilter({ getProduct }: any) {
-  const [valueSearch, setValueSearch] = useState<string>("");
-  const stateDebounce = useDebouncedEffects(valueSearch, 3000);
+// c1
 
-  useEffect(() => {
-    console.log(stateDebounce);
-  }, [stateDebounce]);
+// import debounce from "lodash/debounce";
 
-  // console.log("render");
-  
+import { useNavigate } from "react-router";
+
+export default function FormFilter({ getProduct, value }: any) {
+  const [valueSearch, setValueSearch] = useState<string>(value);
+  const navigate = useNavigate();
+
   return (
     <div>
       <Row>
         <Col>
           <Input
             value={valueSearch}
-            onChange={(e) => setValueSearch(e.target.value)}
+            onChange={(e) => {
+              setValueSearch(e.target.value);
+              navigate(`?title_like=${e.target.value}`);
+              getProduct({
+                title_like: e.target.value,
+              });
+            }}
           />
         </Col>
       </Row>

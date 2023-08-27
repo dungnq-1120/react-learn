@@ -1,32 +1,37 @@
-import { useEffect, useState } from "react";
-import {
-  Col,
-  Pagination,
-  Row,
-  Spin,
-  Input
-} from "antd";
+import { useState, useRef, useEffect } from "react";
+import { Col, Pagination, Row, Spin, Input, Button } from "antd";
 import "./App.css";
 import "../src/lib/antd/customAntd.css";
 
+import { useSearchParams } from "react-router-dom";
+
 import useDidMount from "./hooks/useDidMount";
-import restClient from "./restClient";
+import restClient from "./services/restClient";
 import CartItem, { ICardItemProps } from "./components/cartItem";
 import FormFilter from "./components/FormFilter";
+import { isEmpty } from "lodash";
+import { getCartsApi } from "./services/cartApi";
 
 interface IMeta {
   _limit: number;
   _totalRows: number;
   _page: number;
+  title_like?: string;
 }
 
 function App() {
   const [products, setProduct] = useState<ICardItemProps[]>([]);
+  const [carts, setCarts] = useState<ICardItemProps[]>([]);
+
+  const [searchParams] = useSearchParams();
+
   const [meta, setMeta] = useState<IMeta>({
-    _limit: 8,
-    _totalRows: 0,
-    _page: 1,
+    _limit: Number(searchParams.get("_limit")) || 8,
+    _totalRows: Number(searchParams.get("_totalRows")) || 0,
+    _page: Number(searchParams.get("_page")) || 0,
+    title_like: searchParams.get("title_like") || "",
   });
+
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   async function getProduct(metaProps?: IMeta) {
@@ -36,7 +41,7 @@ function App() {
         url: "/products",
         params: metaProps || meta,
       });
-      setProduct(res.data);
+      setProduct((products) => [...products, ...res.data]);
       setMeta(res.pagination);
     } catch (error) {
       alert("error");
@@ -45,36 +50,30 @@ function App() {
     }
   }
 
-  useDidMount(getProduct);
+  async function getCarts() {
+    const res = await getCartsApi();
+    setCarts(res);
+  }
+
+  useDidMount(() => {
+    getProduct();
+    getCarts();
+  });
 
   return (
     <>
-      <FormFilter getProduct={() => getProduct()}/>
-      <Row>
-      </Row>
-      {products.length > 0 && (
-        <Pagination
-          defaultPageSize={10}
-          total={meta._totalRows}
-          onChange={(page) =>
-            getProduct({
-              ...meta,
-              _page: page,
-            })
-          }
-        />
-      )}
-      {isLoading ? (
-        <Spin />
-      ) : (
-        <Row>
-          {products.map((product) => (
-            <Col key={product.title} xs={6}>
-              <CartItem title={product.title} image={product?.image} />
+      <h1>Carts: {carts.length}</h1>
+      {!isEmpty(products) && (
+        <Row id="ref">
+          {products.map((product, index) => (
+            <Col key={index} xs={6}>
+              <CartItem product={product} carts={carts} getCarts={() => getCarts()}/>
             </Col>
           ))}
         </Row>
       )}
+      {isLoading && <Spin />}
+      {/* <div ref={refList}></div> */}
     </>
   );
 }
