@@ -8,11 +8,12 @@ import { useSearchParams } from "react-router-dom";
 import useDidMount from "./hooks/useDidMount";
 import restClient from "./services/restClient";
 import CartItem, { ICardItemProps } from "./components/cartItem";
-import FormFilter from "./components/FormFilter";
 import { isEmpty } from "lodash";
 import { getCartsApi } from "./services/cartApi";
+import { useAppDispatch, useAppSelector } from "./utils/reduxHelper";
+import { setProduct, setProductFall, setProductRequest } from "./redux/action";
 
-interface IMeta {
+export interface IMeta {
   _limit: number;
   _totalRows: number;
   _page: number;
@@ -20,33 +21,22 @@ interface IMeta {
 }
 
 function App() {
-  const [products, setProduct] = useState<ICardItemProps[]>([]);
   const [carts, setCarts] = useState<ICardItemProps[]>([]);
+  const productsReducer = useAppSelector((state) => state.products);
 
-  const [searchParams] = useSearchParams();
+  const dispatch = useAppDispatch();
 
-  const [meta, setMeta] = useState<IMeta>({
-    _limit: Number(searchParams.get("_limit")) || 8,
-    _totalRows: Number(searchParams.get("_totalRows")) || 0,
-    _page: Number(searchParams.get("_page")) || 0,
-    title_like: searchParams.get("title_like") || "",
-  });
-
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  async function getProduct(metaProps?: IMeta) {
+  async function getProduct() {
     try {
-      setIsLoading(true);
+      dispatch(setProductRequest());
       const res = await restClient({
         url: "/products",
-        params: metaProps || meta,
+        params: productsReducer.meta,
       });
-      setProduct((products) => [...products, ...res.data]);
-      setMeta(res.pagination);
+      dispatch(setProduct(res));
     } catch (error) {
       alert("error");
-    } finally {
-      setIsLoading(false);
+      dispatch(setProductFall());
     }
   }
 
@@ -59,21 +49,27 @@ function App() {
     getProduct();
     getCarts();
   });
+  console.log(productsReducer.isLoading);
 
   return (
     <>
       <h1>Carts: {carts.length}</h1>
-      {!isEmpty(products) && (
+      {!isEmpty(productsReducer.data) && (
         <Row id="ref">
-          {products.map((product, index) => (
+          {productsReducer.data.map((product, index) => (
             <Col key={index} xs={6}>
-              <CartItem product={product} carts={carts} getCarts={() => getCarts()}/>
+              <CartItem
+                product={product}
+                carts={carts}
+                getCarts={() => getCarts()}
+              />
             </Col>
           ))}
         </Row>
       )}
-      {isLoading && <Spin />}
-      {/* <div ref={refList}></div> */}
+      {productsReducer.isLoading && <Spin />}
+      {/* {/* <div ref={refList}></div> */}
+      {/* <Counter/> */}
     </>
   );
 }
