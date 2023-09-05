@@ -11,11 +11,11 @@ interface IRestClient {
   data?: any
 }
 
-const restClient = (config: IRestClient) =>
+const restClient = <T>(config: IRestClient) =>
   axiosIns({
     ...config,
   })
-    .then((res) => res.data)
+    .then((res) => res.data as T)
     .catch((err) => {
       alert(err);
     });

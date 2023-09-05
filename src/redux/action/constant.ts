@@ -1,6 +1,7 @@
 export const PRODUCT_ACTION_TYPE = {
   ADD_COUNTER_TYPE: "ADD_COUNTER",
   SET_PRODUCT: "SET_PRODUCT",
+  TESTING: "TESTING",
 };
 
 export const REQUEST = (type: string) => `${type}_REQUEST`;
